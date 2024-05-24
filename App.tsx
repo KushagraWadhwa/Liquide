@@ -5,113 +5,137 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  Dimensions,
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+interface TabsStructure {
+  id: number;
+  name: string;
+  data: Array<number>;
 }
-
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const tab1 = [8, 11, 16, 25, 31, 37, 44, 48];
+  const tab2 = [8, 11, 16, 25, 31, 37, 28, 21];
+  const tab3 = [8, 11, 16, 25, 20, 18, 11, 8];
+  const tabs = [
+    {
+      id: 1,
+      name: 'Tab 1',
+      data: tab1,
+    },
+    {
+      id: 2,
+      name: 'Tab2',
+      data: tab2,
+    },
+    {
+      id: 3,
+      name: 'Tab3',
+      data: tab3,
+    },
+  ];
+  const [commonElements, setCommonElements] = useState<Array<number>>([]);
+  const [selectedTab, setSelectedTab] = useState(1);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const filterOutArray = () => {
+    let filteredArray = [];
+    let a1 = 0,
+      a2 = 0,
+      a3 = 0;
+
+    while (a1 < tab1.length && a2 < tab2.length && a3 < tab3.length) {
+      if (tab1[a1] === tab2[a2] && tab2[a2] === tab3[a3]) {
+        filteredArray.push(tab1[a1]);
+        a1++;
+        a2++;
+        a3++;
+      } else {
+        break;
+      }
+    }
+
+    setCommonElements(filteredArray);
   };
 
+  useEffect(() => {
+    filterOutArray();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <SafeAreaView style={Styles.mainView}>
+      <ScrollView contentContainerStyle={Styles.mainScrollView}>
+        <View style={Styles.blackBoxView}>
+          <ScrollView
+            horizontal
+            contentContainerStyle={Styles.horizontalScroll}>
+            {tabs.map((item: TabsStructure, index: number) => {
+              return (
+                <TouchableOpacity
+                  style={[
+                    Styles.tabView,
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    {
+                      backgroundColor:
+                        item?.id === selectedTab ? '#3b3b3b' : 'transparent',
+                    },
+                  ]}
+                  onPress={() => {
+                    setSelectedTab(item?.id);
+                  }}
+                  key={index}>
+                  <Text
+                    style={[
+                      Styles.nameText,
+                      // eslint-disable-next-line react-native/no-inline-styles
+                      {
+                        color: item?.id !== selectedTab ? 'gray' : 'white',
+                      },
+                    ]}>
+                    {item?.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+const Styles = StyleSheet.create({
+  mainView: {
+    flex: 1,
+    backgroundColor: 'white',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  mainScrollView: {flexGrow: 1, justifyContent: 'center'},
+  blackBoxView: {
+    backgroundColor: 'black',
+    marginHorizontal: 15,
+    borderRadius: 15,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  horizontalScroll: {
+    width: '100%',
+    paddingHorizontal: 10,
+    justifyContent: 'center',
   },
-  highlight: {
-    fontWeight: '700',
+  tabView: {
+    marginVertical: 15,
+    paddingHorizontal: Dimensions.get('screen').width / 10,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  nameText: {
+    fontWeight: 'bold',
   },
 });
 
