@@ -1,0 +1,91 @@
+diff --git a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
+index 1ac4227..fb25bb3 100644
+--- a/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
++++ b/node_modules/react-native-chart-kit/dist/line-chart/LineChart.js
+@@ -291,11 +291,11 @@ var LineChart = /** @class */ (function (_super) {
+         };
+         _this.getXMaxValues = function (data) {
+             return data.reduce(function (acc, cur) {
+-                return cur.data.length > acc ? cur.data.length : acc;
++                return cur.data.length > acc ? cur.data.length-1 : acc;
+             }, 0);
+         };
+         _this.getBezierLinePoints = function (dataset, _a) {
+-            var width = _a.width, height = _a.height, paddingRight = _a.paddingRight, paddingTop = _a.paddingTop, data = _a.data;
++            var width = _a.width, height = _a.height, paddingRight = 0, paddingTop = _a.paddingTop, data = _a.data;
+             if (dataset.data.length === 0) {
+                 return "M0,0";
+             }
+@@ -307,7 +307,7 @@ var LineChart = /** @class */ (function (_super) {
+             var baseHeight = _this.calcBaseHeight(datas, height);
+             var y = function (i) {
+                 var yHeight = _this.calcHeight(dataset.data[i], datas, height);
+-                return Math.floor(((baseHeight - yHeight) / 4) * 3 + paddingTop);
++                return 120-datas[i];
+             };
+             return ["M" + x(0) + "," + y(0)]
+                 .concat(dataset.data.slice(0, -1).map(function (_, i) {
+@@ -383,8 +383,8 @@ var LineChart = /** @class */ (function (_super) {
+           {this.props.data.legend &&
+             this.renderLegend(config.width, legendOffset)}
+           <G x="0" y={legendOffset}>
+-            {this.renderDefs(__assign(__assign(__assign({}, config), chartConfig), { data: data.datasets }))}
+-            <G>
++            {/* {this.renderDefs(__assign(__assign(__assign({}, config), chartConfig), { data: data.datasets }))} */}
++            {/* <G>
+               {withHorizontalLines &&
+             (withInnerLines
+                 ? this.renderHorizontalLines(__assign(__assign({}, config), { count: count, paddingTop: paddingTop,
+@@ -397,31 +397,31 @@ var LineChart = /** @class */ (function (_super) {
+             <G>
+               {withHorizontalLabels &&
+             this.renderHorizontalLabels(__assign(__assign({}, config), { count: count, data: datas, paddingTop: paddingTop, paddingRight: paddingRight, formatYLabel: formatYLabel, decimalPlaces: chartConfig.decimalPlaces }))}
+-            </G>
+-            <G>
++            </G> */}
++            {/* <G>
+               {withVerticalLines &&
+             (withInnerLines
+                 ? this.renderVerticalLines(__assign(__assign({}, config), { data: data.datasets[0].data, paddingTop: paddingTop, paddingRight: paddingRight }))
+                 : withOuterLines
+                     ? this.renderVerticalLine(__assign(__assign({}, config), { paddingTop: paddingTop, paddingRight: paddingRight }))
+                     : null)}
+-            </G>
+-            <G>
++            </G> */}
++            {/* <G>
+               {withVerticalLabels &&
+             this.renderVerticalLabels(__assign(__assign({}, config), { labels: labels, paddingTop: paddingTop, paddingRight: paddingRight, formatXLabel: formatXLabel }))}
+-            </G>
++            </G> */}
+             <G>
+               {this.renderLine(__assign(__assign(__assign({}, config), chartConfig), { paddingRight: paddingRight, paddingTop: paddingTop, data: data.datasets }))}
+             </G>
+-            <G>
++            {/* <G>
+               {withShadow &&
+             this.renderShadow(__assign(__assign({}, config), { data: data.datasets, paddingRight: paddingRight, paddingTop: paddingTop, useColorFromDataset: chartConfig.useShadowColorFromDataset }))}
+             </G>
+             <G>
+               {withDots &&
+             this.renderDots(__assign(__assign({}, config), { data: data.datasets, paddingTop: paddingTop, paddingRight: paddingRight, onDataPointClick: onDataPointClick }))}
+-            </G>
+-            <G>
++            </G> */}
++            {/* <G>
+               {withScrollableDot &&
+             this.renderScrollableDot(__assign(__assign(__assign({}, config), chartConfig), { data: data.datasets, paddingTop: paddingTop, paddingRight: paddingRight, onDataPointClick: onDataPointClick,
+                 scrollableDotHorizontalOffset: scrollableDotHorizontalOffset }))}
+@@ -430,10 +430,10 @@ var LineChart = /** @class */ (function (_super) {
+               {decorator &&
+             decorator(__assign(__assign({}, config), { data: data.datasets, paddingTop: paddingTop,
+                 paddingRight: paddingRight }))}
+-            </G>
++            </G> */}
+           </G>
+         </Svg>
+-        {withScrollableDot && (<ScrollView style={StyleSheet.absoluteFill} contentContainerStyle={{ width: width * 2 }} showsHorizontalScrollIndicator={false} scrollEventThrottle={16} onScroll={Animated.event([
++        {withScrollableDot && (<ScrollView style={StyleSheet.absoluteFill} contentContainerStyle={{ width: width  }} showsHorizontalScrollIndicator={false} scrollEventThrottle={16} onScroll={Animated.event([
+             {
+                 nativeEvent: {
+                     contentOffset: { x: scrollableDotHorizontalOffset }
