@@ -1,10 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -15,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {LineChart} from 'react-native-chart-kit';
 
 interface TabsStructure {
   id: number;
@@ -42,8 +36,11 @@ function App(): React.JSX.Element {
       data: tab3,
     },
   ];
-  const [commonElements, setCommonElements] = useState<Array<number>>([]);
+  const [commonElements, setCommonElements] = useState<Array<number>>([
+    1, 2, 3, 4, 5,
+  ]);
   const [selectedTab, setSelectedTab] = useState(1);
+  const [increasing, setIncreasing] = useState(true);
 
   const filterOutArray = () => {
     let filteredArray = [];
@@ -70,12 +67,42 @@ function App(): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const checkIncreasing = (arr: Array<number>, n: number) => {
+    // If the first two and the last two elements
+    // of the array are in increasing order
+    if (arr[0] <= arr[1] && arr[n - 2] <= arr[n - 1]) {
+      return true;
+    }
+    // If the first two and the last two elements
+    // of the array are in decreasing order
+    else {
+      return false;
+    }
+  };
+
+  const callIncreasing = () => {
+    const data =
+      selectedTab === 1
+        ? tab1.slice(commonElements.length - 1)
+        : selectedTab === 2
+        ? tab2.slice(commonElements.length - 1)
+        : tab3.slice(commonElements.length - 1);
+
+    setIncreasing(checkIncreasing(data, data.length));
+  };
+
+  useEffect(() => {
+    callIncreasing();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTab]);
+
   return (
     <SafeAreaView style={Styles.mainView}>
       <ScrollView contentContainerStyle={Styles.mainScrollView}>
         <View style={Styles.blackBoxView}>
           <ScrollView
             horizontal
+            style={Styles.heightMainScroll}
             contentContainerStyle={Styles.horizontalScroll}>
             {tabs.map((item: TabsStructure, index: number) => {
               return (
@@ -106,6 +133,65 @@ function App(): React.JSX.Element {
               );
             })}
           </ScrollView>
+          <View style={Styles.chartView}>
+            <LineChart
+              withOuterLines={false}
+              withInnerLines={false}
+              bezier
+              fromZero
+              data={{
+                datasets: [
+                  {
+                    data: commonElements,
+                  },
+                ],
+              }}
+              width={Dimensions.get('window').width / 2.5}
+              height={170}
+              yAxisInterval={1}
+              chartConfig={{
+                color: () => 'rgba(255, 255, 255,1)',
+              }}
+              xLabelsOffset={90}
+              withDots={false}
+              transparent
+              withHorizontalLines={false}
+              withVerticalLines={false}
+              withVerticalLabels={false}
+              withHorizontalLabels={false}
+              withShadow={false}
+            />
+            <View style={Styles.lineView} />
+            <LineChart
+              bezier
+              fromZero
+              data={{
+                datasets: [
+                  {
+                    data:
+                      selectedTab === 1
+                        ? tab1.slice(commonElements.length - 1)
+                        : selectedTab === 2
+                        ? tab2.slice(commonElements.length - 1)
+                        : tab3.slice(commonElements.length - 1),
+                  },
+                ],
+              }}
+              width={Dimensions.get('window').width / 2.5}
+              height={170}
+              yAxisInterval={1}
+              chartConfig={{
+                color: () =>
+                  increasing ? 'rgba(154, 205, 50,1)' : 'rgba(255, 0, 0,1)',
+              }}
+              withDots={false}
+              withHorizontalLines={false}
+              withVerticalLines={false}
+              withVerticalLabels={false}
+              withHorizontalLabels={false}
+              withShadow={false}
+            />
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -137,6 +223,12 @@ const Styles = StyleSheet.create({
   nameText: {
     fontWeight: 'bold',
   },
+  heightMainScroll: {
+    marginTop: Dimensions.get('window').height / 10,
+    marginBottom: Dimensions.get('window').height / 18,
+  },
+  chartView: {flexDirection: 'row', justifyContent: 'center'},
+  lineView: {height: 140, width: 1, backgroundColor: '#3b3b3b'},
 });
 
 export default App;
